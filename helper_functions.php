@@ -1,42 +1,43 @@
 <?php
     
-  function create_user($username, $password)
+function create_user($username, $password)
+{
+    // Creates a random string for our salt
+    $salt = openssl_random_pseudo_bytes(8);
+    $timestamp = time();
+    $hashed_password = hash("sha512", $password . $salt);
+    $authority_level = 100;
+    
+    // Establish connection to the database
+    $con=mysqli_connect("127.0.0.1", "root", "mysql", "csc235_project1");
+    
+    if (mysqli_connect_errno()) 
     {
-        $salt = openssl_random_pseudo_bytes(8);
-        $timestamp = time();
-        $hashed_password = hash("sha512", $password . $salt);
-        $authority_level = 100;
-        
-        // Establish connection to the database
-        $con=mysqli_connect("127.0.0.1", "root", "mysql", "csc235_project1");
-        
-        if (mysqli_connect_errno()) 
-        {
-            echo "Failed to connect to MySQL: " . mysqli_connect_error();
-        }
-        
-        $insert = "INSERT INTO `csc235_project1`.`users` (`username`, `hashed_password`, `salt`, `authority_level`, `timestamp`) 
-        VALUES (\"" . $username . "\", \"" . $hashed_password . "\", \"" . $salt . "\", " . $authority_level . ", " . $timestamp . ")";
-        
-        // Execute insertion
-        if (mysqli_query($con, $insert)) 
-        {
-            //echo "User successfully created";
-            return true;
-        } 
-        else 
-        {
-            //echo "Error creaing user: " . mysqli_error($con);
-            return false;
-        }
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
     
-    function change_password($username, $new_password)
-    {
-        
-    }
+    $insert = "INSERT INTO `csc235_project1`.`users` (`username`, `hashed_password`, `salt`, `authority_level`, `timestamp`) 
+    VALUES (\"" . $username . "\", \"" . $hashed_password . "\", \"" . $salt . "\", " . $authority_level . ", " . $timestamp . ")";
     
-    function get_user_data($username)
+    // Execute insertion
+    if (mysqli_query($con, $insert)) 
+    {
+        //echo "User successfully created";
+        return true;
+    } 
+    else 
+    {
+        //echo "Error creaing user: " . mysqli_error($con);
+        return false;
+   }
+}
+    
+function change_password($username, $new_password)
+{
+    // TODO
+}
+    
+function get_user_data($username)
 {
 	// Establish connection to the database
 	$con=mysqli_connect("127.0.0.1", "root", "mysql", "csc235_project1");
@@ -100,12 +101,12 @@
     $user_package[3] = $authority_levels[$result];
     $user_package[4] = $timestamps[$result];
 	
-	return $user_package;
+    return $user_package;
 }
 
 function login()
 {
-    
+    // TODO
 }
 
 ?>
