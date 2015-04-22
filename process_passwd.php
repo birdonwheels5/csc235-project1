@@ -109,7 +109,51 @@
 					<p>
 						<div class="box">
 							<p>
-                                nlf.nsdfnsdf
+                                <?php
+                                    // TODO Process password change
+                                    
+                                    $old_password = trim(htmlspecialchars($_POST["old_password"]));
+                                    $new_password = trim(htmlspecialchars($_POST["new_password"]));
+                                    $new_password_repeat = trim(htmlspecialchars($_POST["new_password_repeat"]));
+                                    
+                                    // Check cookie, grab username
+                                    $user_cookie = get_cookie("compsec");
+                                    if(validate_cookie($user_cookie) == false)
+                                    {
+                                        print "Error: Invalid cookie. Please fix or delete your cookie and try again.";
+                                    }
+                                    else if($new_password != $new_password_repeat)
+                                    {
+                                        print "Error: New passwords do not match. Press the back button to try again.";
+                                    }
+                                    else
+                                    {
+                                        $username = $user_cookie->get_username();
+                                        
+                                        $results = get_user_data($username);
+                                        $database_password = $results[1];
+                                        $salt = $results[2];
+                                        
+                                        // Validate that the supplied password is correct
+                                        $hashed_password = hash("sha512", $old_password . $salt);
+                                        
+                                        if($database_password == $hashed_password)
+                                        {
+                                            // Replace password
+                                            $hashed_new_password = hash("sha512", $new_password . $salt);
+                                            
+                                            
+                                            delete_cookie("compsec");
+                                            
+                                            // Set header to a new page with success message
+                                            print "Password successfully changed! Please log in with your new password.";
+                                        }
+                                        else
+                                        {
+                                            print "Error: Invalid password. Press the back button to try again.";
+                                        }
+                                    }
+                                ?>
 							</p>
 						</div>
 

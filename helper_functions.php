@@ -32,11 +32,6 @@ function create_user($username, $password)
    }
 }
     
-function change_password($username, $new_password)
-{
-    // TODO
-}
-    
 function get_user_data($username)
 {
 	// Establish connection to the database
@@ -102,11 +97,6 @@ function get_user_data($username)
     $user_package[4] = $timestamps[$result];
 	
     return $user_package;
-}
-
-function login()
-{
-    // TODO
 }
 
 ?>
