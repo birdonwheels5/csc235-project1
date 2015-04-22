@@ -99,4 +99,43 @@ function get_user_data($username)
     return $user_package;
 }
 
+// This function will create a new cookie object with values found
+// from the global cookie variable
+// It will return the cookie to the caller
+public function get_cookie()
+{
+    $cookie = $_COOKIE[$this->cookie_name];
+        
+    // Fill out the cookie's attributes
+        
+    return $cookie;
+}
+    
+// Verifies that a cookie 
+public function verify_cookie($cookie)
+{
+    $cookie_name = ("cookie_" . $this->username);
+        
+    // Check if cookie exists
+    if ($this->exists($this->cookie_name) == false)
+    {
+        return false;
+    }
+                
+    $cookie = $_COOKIE[$this->cookie_name];
+
+    $expired = $expiration;
+        
+    if ($expired < time())
+        return false;
+
+    $key = hash_hmac('md5', $id . $expiration, $this->SECRET_KEY);
+    $hash = hash_hmac('md5', $id . $expiration, $key);
+
+    if ($hmac != $hash)
+        return false;
+
+    return true;
+}
+
 ?>
