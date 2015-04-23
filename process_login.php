@@ -126,7 +126,7 @@
                                         if($database_password == $hashed_password)
                                         {
                                             // Store cookie on client's computer
-                                            $cookie = new Cookie($username, $hashed_password);
+                                            $cookie = Cookie::create($username, $hashed_password);
                                             $cookie_handler->set_cookie($cookie);
                                             if($cookie->set_cookie() == false)
                                             {

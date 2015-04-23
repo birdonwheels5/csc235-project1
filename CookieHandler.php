@@ -10,7 +10,6 @@
   * So, what you need to do is the following:
   * 
   * Finish the get methods
-  * Finish get_cookie()
   * Refactor the verify_cookie() method to accept and verify a supplied cookie object
   * delete_cookie() method
   * 
@@ -22,6 +21,8 @@
   * PS: Already made the cookie class
   * 
   */
+  
+  include "Cookie.php";
 
 class CookieHandler {
     //Random 256-bit key
@@ -81,9 +82,15 @@ class CookieHandler {
     {
         $cookie_plaintext = $_COOKIE[$cookie_name];
         
-        // $cookie = new Cookie();
+        // Username will be in $array[0], hashed password in $array[1]
+        // and MAC in $array[2]
+        $array = array();
+        $array = explode('|', $cookie_plaintext);
         
-        // Fill out the cookie's attributes
+        // The reason we have "::" is because normally you cannot have
+        // multiple constructors, but we can use the factory pattern to do it
+        // Note: When using the factory pattern, you don't use the "new" keyword!
+        $cookie = Cookie::retrieve($array[0], $array[1], $array[2]);
         
         return $cookie;
     }
@@ -98,9 +105,7 @@ class CookieHandler {
         {
             return false;
         }
-                    
-        $cookie = $_COOKIE[$this->cookie_name];
-
+        
         $expired = $expiration;
         
         if ($expired < time())

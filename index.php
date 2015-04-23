@@ -5,7 +5,7 @@
 		<title>Index</title>
 		<link rel="stylesheet" type="text/css" href="styles.css" title="Default Styles" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans" title="Font Styles"/>
-		<?php include "Cookie.php"; ?>
+		<?php include "CookieHandler.php"; ?>
 	</head>
 	
 	<body link="#E2E2E2" vlink="#ADABAB">
