@@ -5,12 +5,13 @@
 		<title>Admin Area</title>
 		<link rel="stylesheet" type="text/css" href="styles.css" title="Default Styles" media="screen"/>
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans" title="Font Styles"/>
-		<?php include "Cookie.php"; ?>
+		<?php include "CookieHandler.php"; ?>
 	</head>
 	
 	<body link="#E2E2E2" vlink="#ADABAB">
 		<center><div class="container">
-	
+            
+            <?php $cookie_handler = new CookieHandler(); ?>
 		
 			<header>
 		
@@ -24,11 +25,11 @@
 				
 				<div class="button">
 					<?php 
-                        $cookie = new Cookie("a", "a");
-                        if($cookie->exists("compsec"))
+                        
+                        if($cookie_handler->cookie_exists("compsec"))
                         {
-                            $user_cookie = $cookie->get_cookie("compsec");
-                            if($cookie->validate_cookie($user_cookie) == true)
+                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"logout.php\">Logout</a></p>";
                             }
@@ -46,11 +47,10 @@
 				
 				<div class="button">
                     <?php
-                        $cookie = new Cookie("a", "a");
-                        if($cookie->exists("compsec"))
+                        if($cookie_handler->cookie_exists("compsec"))
                         {
-                            $user_cookie = $cookie->get_cookie("compsec");
-                            if($cookie->validate_cookie($user_cookie) == true)
+                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 
                             }
@@ -68,11 +68,10 @@
                 
                 <div class="button">
                     <?php
-                        $cookie = new Cookie("a", "a");
-                        if($cookie->exists("compsec"))
+                        if($cookie_handler->cookie_exists("compsec"))
                         {
-                            $user_cookie = $cookie->get_cookie("compsec");
-                            if($cookie->validate_cookie($user_cookie) == true)
+                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"passwd.php\">Change Password</a></p>";
                             }

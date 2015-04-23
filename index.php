@@ -11,6 +11,7 @@
 	<body link="#E2E2E2" vlink="#ADABAB">
 		<center><div class="container">
 	
+		<?php $cookie_handler = new CookieHandler(); ?>
 		
 			<header>
 		
@@ -24,12 +25,11 @@
 				
 				<div class="button">
 					<?php 
-                        $cookie = new Cookie("a", "a");
-                        if($cookie->exists("compsec"))
+                        
+                        if($cookie_handler->cookie_exists("compsec"))
                         {
-                        }
-                            /*$user_cookie = $cookie->get_cookie("compsec");
-                            if($cookie->validate_cookie($user_cookie) == true)
+                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"logout.php\">Logout</a></p>";
                             }
@@ -41,18 +41,16 @@
                         else
                         {
                             print "<p><a href =\"login.php\">Login</a></p>";
-                        }*/
+                        }
                     ?>
 				</div>
 				
 				<div class="button">
                     <?php
-                        $cookie = new Cookie("a", "a");
-                        if($cookie->exists("compsec"))
+                        if($cookie_handler->cookie_exists("compsec"))
                         {
-                        }
-                            /*$user_cookie = $cookie->get_cookie("compsec");
-                            if($cookie->validate_cookie($user_cookie) == true)
+                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 
                             }
@@ -64,18 +62,16 @@
                         else
                         {
                             print "<p><a href =\"createuser.php\">Create an Account</a></p>";
-                        }*/
+                        }
                     ?>
 				</div>
                 
                 <div class="button">
                     <?php
-                        $cookie = new Cookie("a", "a");
-                        if($cookie->exists("compsec"))
+                        if($cookie_handler->cookie_exists("compsec"))
                         {
-                        }
-                            /*$user_cookie = $cookie->get_cookie("compsec");
-                            if($cookie->validate_cookie($user_cookie) == true)
+                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"passwd.php\">Change Password</a></p>";
                             }
@@ -87,7 +83,7 @@
                         else
                         {
                             
-                        }*/
+                        }
                     ?>
 				</div>
 				
