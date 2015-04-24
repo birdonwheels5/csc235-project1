@@ -11,8 +11,13 @@
 	
 	<body link="#E2E2E2" vlink="#ADABAB">
 		<center><div class="container">
-	
-		<?php $cookie_handler = new CookieHandler(); ?>
+            
+            <?php 
+            
+                $cookie_handler = new CookieHandler();
+                $cookie_name = $cookie_handler->get_cookie_name();
+            
+            ?>
 		
 			<header>
 		
@@ -27,15 +32,16 @@
 				<div class="button">
 					<?php 
                         
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"logout.php\">Logout</a></p>";
                             }
                             else
                             {
+                                $cookie_handler->delete_cookie($cookie_name);
                                 print "<p><a href =\"login.php\">Login</a></p>";
                             }
                         }
@@ -48,15 +54,16 @@
 				
 				<div class="button">
                     <?php
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 
                             }
                             else
                             {
+                                $cookie_handler->delete_cookie($cookie_name);
                                 print "<p><a href =\"createuser.php\">Create an Account</a></p>";
                             }
                         }
@@ -69,16 +76,16 @@
                 
                 <div class="button">
                     <?php
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"passwd.php\">Change Password</a></p>";
                             }
                             else
                             {
-                                
+                                $cookie_handler->delete_cookie($cookie_name);
                             }
                         }
                         else
@@ -114,9 +121,15 @@
                                     
                                     // Check to see if the user is already in the database.
                                     // The function will return an array if they are.
-                                    if(is_array(get_user_data($username)))
+                                    
+                                    $uuid = hash("sha256", $username);
+                                    if(is_array(get_user_data($uuid)))
                                     {
                                         print "Username already exists! Please press the back button to try another username.";
+                                    }
+                                    else if(empty($password))
+                                    {
+                                        print "Password cannot be empty! Please press the back button to try again.";
                                     }
                                     else
                                     {
@@ -147,7 +160,7 @@
 			<div class="paddingBottom">
 			</div>
 			
-			<footer style="position:absolute; bottom:0;">
+			<footer>
 				2015 David Puglisi, Colby Leclerc.
 			</footer>
 		</div>

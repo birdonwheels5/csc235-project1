@@ -1,34 +1,14 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: colby
- * Date: 4/19/15
- * Time: 11:54 AM
- */
- 
- /*
-  * So, what you need to do is the following:
-  * 
-  * Finish the get methods
-  * Refactor the verify_cookie() method to accept and verify a supplied cookie object
-  * delete_cookie() method
-  * 
-  * And whatever else you think the class needs. Anything cookie related, really.
-  * 
-  * Note: I renamed the class to CookieHandler, because that's basically what it is.
-  * Maybe we should make another class for cookies? (I'm not that great with OOP yet)
-  * 
-  * PS: Already made the cookie class
-  * 
-  */
   
-  include "Cookie.php";
+include "Cookie.php";
 
-class CookieHandler {
+class CookieHandler 
+{
     //Random 256-bit key
     private $SECRET_KEY = "C5B75BD864EBA5837F9727ED73894";
     
     // Cookie attributes
+    private $cookie_name = "compsec";
     private $cookie_directory = "/";
     private $hmac_hash = "";
     
@@ -40,19 +20,19 @@ class CookieHandler {
     private function generate_cookie($cookie) 
     {
         // Generate hash
-        $key = hash_hmac( 'md5', $cookie->username . $cookie->expiration, $this->SECRET_KEY );
-        $this->hmac_hash = hash_hmac( 'md5', $cookie->username . $cookie->expiration, $key );
+        $key = hash_hmac( 'md5', $cookie->get_uuid() . $cookie->get_expiration(), $this->SECRET_KEY );
+        $this->hmac_hash = hash_hmac( 'md5', $cookie->get_uuid() . $cookie->get_expiration(), $key );
         
-        $cookie_plaintext = ($cookie->username . '|' . $cookie->hashed_password . '|' . $this->hmac_hash);
+        $cookie_plaintext = ($cookie->get_uuid() . '|' . $cookie->get_password() . '|' . $this->hmac_hash . "|" . $cookie->get_expiration());
 
         return $cookie_plaintext;
     }
     
-    public function set_cookie($cookie_name) 
+    public function set_cookie($cookie_name, $cookie) 
     {
-        $cookie_plaintext = $this->generate_cookie();
+        $cookie_plaintext = $this->generate_cookie($cookie);
 
-        if (!setcookie($this->cookie_name, $cookie_plaintext, $this->expiration, $this->cookie_directory)) 
+        if (!setcookie($cookie_name, $cookie_plaintext, $cookie->get_expiration(), $this->cookie_directory)) 
         {
             //echo("ERROR: Unable to create cookie");
             return false;
@@ -60,10 +40,14 @@ class CookieHandler {
         return true;
     }
     
-    
+    public function delete_cookie($cookie_name)
+    {
+        // Sets a new cookie that expires immediately after being placed
+        setcookie($cookie_name, "", 1, $this->cookie_directory);
+    }
     
     // Check if cookie exists
-    public function exists($cookie_name)
+    public function cookie_exists($cookie_name)
     {
         if (empty($_COOKIE[$cookie_name]))
         {
@@ -83,43 +67,56 @@ class CookieHandler {
         $cookie_plaintext = $_COOKIE[$cookie_name];
         
         // Username will be in $array[0], hashed password in $array[1]
-        // and MAC in $array[2]
+        // MAC in $array[2] and cookie expiration in $array[3]
         $array = array();
         $array = explode('|', $cookie_plaintext);
         
         // The reason we have "::" is because normally you cannot have
         // multiple constructors, but we can use the factory pattern to do it
         // Note: When using the factory pattern, you don't use the "new" keyword!
-        $cookie = Cookie::retrieve($array[0], $array[1], $array[2]);
+        $cookie = Cookie::retrieve($array[0], $array[1], $array[2], $array[3]);
         
         return $cookie;
     }
     
     // Verifies that a cookie hash not been tampered with and is valid
-    public function verify_cookie($cookie)
+    public function validate_cookie($cookie)
     {
-        $cookie_name = ("cookie_" . $this->username);
-            
-        // Check if cookie exists
-        if ($this->exists($this->cookie_name) == false)
+        $expiration = $cookie->get_expiration();
+        
+        if (time() > $expiration)
+        {
+            return false;
+        }
+
+        $key = hash_hmac( 'md5', $cookie->get_uuid() . $cookie->get_expiration(), $this->SECRET_KEY );
+        $hash = hash_hmac( 'md5', $cookie->get_uuid() . $cookie->get_expiration(), $key );
+        
+        $hmac = $cookie->get_hmac_hash();
+
+        if ($hmac != $hash)
         {
             return false;
         }
         
-        $expired = $expiration;
-        
-        if ($expired < time())
-            return false;
-
-        $key = hash_hmac('md5', $id . $expiration, $this->SECRET_KEY);
-        $hash = hash_hmac('md5', $id . $expiration, $key);
-
-        if ($hmac != $hash)
-            return false;
-
         return true;
     }
     
-    // Get methods go here
-
+    public function get_cookie_name()
+    {
+        return $this->cookie_name;
+    }
+    
+    /*
+     * These functions are not used
+     * 
+    public function get_cookie_directory()
+    {
+        return $this->cookie_directory;
+    }
+    
+    public function get_hmac_hash()
+    {
+        return $this->hmac_hash;
+    }*/
 }

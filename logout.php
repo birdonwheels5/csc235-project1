@@ -10,8 +10,13 @@
 	
 	<body link="#E2E2E2" vlink="#ADABAB">
 		<center><div class="container">
-	
-		<?php $cookie_handler = new CookieHandler(); ?>
+            
+            <?php 
+            
+                $cookie_handler = new CookieHandler();
+                $cookie_name = $cookie_handler->get_cookie_name();
+            
+            ?>
 		
 			<header>
 		
@@ -26,15 +31,16 @@
 				<div class="button">
 					<?php 
                         
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"logout.php\">Logout</a></p>";
                             }
                             else
                             {
+                                $cookie_handler->delete_cookie($cookie_name);
                                 print "<p><a href =\"login.php\">Login</a></p>";
                             }
                         }
@@ -47,15 +53,16 @@
 				
 				<div class="button">
                     <?php
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 
                             }
                             else
                             {
+                                $cookie_handler->delete_cookie($cookie_name);
                                 print "<p><a href =\"createuser.php\">Create an Account</a></p>";
                             }
                         }
@@ -68,16 +75,16 @@
                 
                 <div class="button">
                     <?php
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"passwd.php\">Change Password</a></p>";
                             }
                             else
                             {
-                                
+                                $cookie_handler->delete_cookie($cookie_name);
                             }
                         }
                         else
@@ -110,10 +117,9 @@
                                 <?php
                                     
                                     // Perform logout here
-                                    $cookie = new Cookie("a", "a");
-                                    if($cookie->exists("compsec") == true)
+                                    if($cookie_handler->cookie_exists("compsec") == true)
                                     {
-                                        $cookie->delete_cookie("compsec");
+                                        $cookie_handler->delete_cookie("compsec");
                                         header("location:index.php");
                                     }
                                     else
@@ -137,7 +143,7 @@
 			<div class="paddingBottom">
 			</div>
 			
-			<footer style="position:absolute; bottom:0;">
+			<footer>
 				2015 David Puglisi, Colby Leclerc.
 			</footer>
 		</div>

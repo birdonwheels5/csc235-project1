@@ -11,8 +11,13 @@
 	
 	<body link="#E2E2E2" vlink="#ADABAB">
 		<center><div class="container">
-	
-		<?php $cookie_handler = new CookieHandler(); ?>
+            
+            <?php 
+            
+                $cookie_handler = new CookieHandler();
+                $cookie_name = $cookie_handler->get_cookie_name();
+            
+            ?>
 		
 			<header>
 		
@@ -27,15 +32,16 @@
 				<div class="button">
 					<?php 
                         
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"logout.php\">Logout</a></p>";
                             }
                             else
                             {
+                                $cookie_handler->delete_cookie($cookie_name);
                                 print "<p><a href =\"login.php\">Login</a></p>";
                             }
                         }
@@ -48,15 +54,16 @@
 				
 				<div class="button">
                     <?php
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 
                             }
                             else
                             {
+                                $cookie_handler->delete_cookie($cookie_name);
                                 print "<p><a href =\"createuser.php\">Create an Account</a></p>";
                             }
                         }
@@ -69,16 +76,16 @@
                 
                 <div class="button">
                     <?php
-                        if($cookie_handler->cookie_exists("compsec"))
+                        if($cookie_handler->cookie_exists($cookie_name))
                         {
-                            $user_cookie = $cookie_handler->get_cookie("compsec");
+                            $user_cookie = $cookie_handler->get_cookie($cookie_name);
                             if($cookie_handler->validate_cookie($user_cookie) == true)
                             {
                                 print "<p><a href =\"passwd.php\">Change Password</a></p>";
                             }
                             else
                             {
-                                
+                                $cookie_handler->delete_cookie($cookie_name);
                             }
                         }
                         else
@@ -112,37 +119,49 @@
                                     $username = trim(htmlspecialchars($_POST["username"]));
                                     $password = trim(htmlspecialchars($_POST["password"]));
                                     
-                                    // Check to see if the user is already in the database.
-                                    // The function will return an array if they are.
-                                    $results = get_user_data($username);
-                                    if(is_array($results))
+                                    $uuid = hash("sha256", $username);
+                                    
+                                    // Check to see if the user is already logged in
+                                    if($cookie_handler->cookie_exists("compsec"))
                                     {
-                                        $database_password = $results[1];
-                                        $salt = $results[2];
-                                        
-                                        // Validate that the supplied password is correct
-                                        $hashed_password = hash("sha512", $password . $salt);
-                                        
-                                        if($database_password == $hashed_password)
-                                        {
-                                            // Store cookie on client's computer
-                                            $cookie = Cookie::create($username, $hashed_password);
-                                            $cookie_handler->set_cookie($cookie);
-                                            if($cookie->set_cookie() == false)
-                                            {
-                                                print "An unexpected error has prevented you from logging in. Reason: Unable to create a login cookie.";
-                                            }
-                                            // Login successful
-                                            header("location:index.php");
-                                        }
-                                        else
-                                        {
-                                            print "Error: Invalid password. Press the back button to try again.";
-                                        }
+                                        print "Error: Cannot log in if user is already logged in!";
                                     }
                                     else
                                     {
-                                        print "Error: User does not exist! Press the back button to try again.";
+                                        // Check to see if the user is already in the database.
+                                        // The function will return an array if they are.
+                                        $results = get_user_data($uuid);
+                                        if(is_array($results))
+                                        {
+                                            $uuid = $results[1];
+                                            $database_password = $results[2];
+                                            $salt = $results[3];
+                                            
+                                            // Validate that the supplied password is correct
+                                            $hashed_password = hash("sha512", $password . $salt);
+                                            
+                                            if($database_password == $hashed_password)
+                                            {
+                                                // Store cookie on client's computer
+                                                $cookie = Cookie::create($uuid, $hashed_password);
+                                                $result = $cookie_handler->set_cookie("compsec", $cookie);
+                                                if($result == false)
+                                                {
+                                                    print "An unexpected error has prevented you from logging in. Reason: Unable to create a login cookie.";
+                                                }
+                                                // Login successful
+                                                update_last_login($uuid);
+                                                header("location:index.php");
+                                            }
+                                            else
+                                            {
+                                                print "Error: Invalid password. Press the back button to try again.";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            print "Error: User does not exist! Press the back button to try again.";
+                                        }
                                     }
                                 ?>
 							</p>
@@ -158,7 +177,7 @@
 			<div class="paddingBottom">
 			</div>
 			
-			<footer style="position:absolute; bottom:0;">
+			<footer>
 				2015 David Puglisi, Colby Leclerc.
 			</footer>
 		</div>

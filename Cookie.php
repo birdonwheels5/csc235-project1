@@ -1,9 +1,10 @@
 <?php
 
-class Cookie {
+class Cookie
+{
         
     // Cookie attributes
-    private $username = "";
+    private $uuid = "";
     private $hashed_password = "";
     private $expiration = 0;
     private $hmac_hash = "";
@@ -14,28 +15,29 @@ class Cookie {
     }
     
     // Constructor for creating new cookies
-    public function create($username, $hashed_password)
+    public function create($uuid, $hashed_password)
     {
         $cookie = new Cookie();
-        $cookie->set_username($username);
+        $cookie->set_uuid($uuid);
         $cookie->set_password($hashed_password);
         $cookie->set_expiration(172800); // 2 days
         return $cookie;
     }
     
     // Constructor for retrieving placed cookies
-    public function retrieve($username, $hashed_password, $hmac_hash)
+    public function retrieve($uuid, $hashed_password, $hmac_hash, $expiration)
     {
         $cookie = new Cookie();
-        $cookie->set_username($username);
+        $cookie->set_uuid($uuid);
         $cookie->set_password($hashed_password);
         $cookie->set_hmac_hash($hmac_hash);
+        $cookie->expiration = $expiration;
         return $cookie;
     }
 
-    private function set_username($username)
+    private function set_uuid($uuid)
     {
-        $this->username = $username;
+        $this->uuid = $uuid;
     }
     
     private function set_password($password)
@@ -55,9 +57,9 @@ class Cookie {
         $this->hmac_hash = $hmac_hash;
     }
     
-    public function get_username()
+    public function get_uuid()
     {
-        return $this->username;
+        return $this->uuid;
     }
     
     public function get_password()
@@ -65,12 +67,12 @@ class Cookie {
         return $this->hashed_password;
     }
     
-    private function get_expiration()
+    public function get_expiration()
     {
         return $this->expiration;
     }
     
-    private function get_hmac_hash()
+    public function get_hmac_hash()
     {
         return $this->hmac_hash;
     }
