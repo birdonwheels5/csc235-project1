@@ -117,9 +117,9 @@
                                 <?php
                                     
                                     // Perform logout here
-                                    if($cookie_handler->cookie_exists("compsec") == true)
+                                    if($cookie_handler->cookie_exists($cookie_name) == true)
                                     {
-                                        $cookie_handler->delete_cookie("compsec");
+                                        $cookie_handler->delete_cookie($cookie_name);
                                         header("location:index.php");
                                     }
                                     else
